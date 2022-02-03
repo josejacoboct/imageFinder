@@ -9,26 +9,46 @@ import UIKit
 
 class DetailImageViewController: UIViewController {
     
-    //Outlets
-    @IBOutlet weak var imageSelectedImageView: UIImageView!
-    
-    @IBOutlet weak var scrollView: UIScrollView!
     //var
-    var image = UIImage(named: "sap")
+    var image = UIImage(named: "default")
+    let detailImageView = UIImageView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        detailImageView.image = image
+    }
         
-        self.scrollView.minimumZoomScale = 1
-        self.scrollView.maximumZoomScale = 60
-        imageSelectedImageView.image = image
-        
+    override func viewDidLayoutSubviews() {
+        setDetailSelectedImage()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    func setDetailSelectedImage(){
+    
+        //set scroll view
+        let imageScrollView: UIScrollView = UIScrollView()
+        imageScrollView.delegate = self
+        imageScrollView.alwaysBounceVertical = false
+        imageScrollView.alwaysBounceHorizontal = false
+        imageScrollView.showsVerticalScrollIndicator = true
+        imageScrollView.flashScrollIndicators()
+        imageScrollView.minimumZoomScale = 1.0
+        imageScrollView.maximumZoomScale = 10.0
+        self.view.addSubview(imageScrollView)
         
+        //set detail image view
+        let navBarHeight = self.view.frame.height - self.view.safeAreaLayoutGuide.layoutFrame.height
+        let frameImage = CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height - navBarHeight)
+        detailImageView.contentMode = .scaleAspectFit
+        detailImageView.frame = frameImage
+        imageScrollView.addSubview(detailImageView)
+
+        //set constraints to imageScrollView
+        let safeArea = self.view.safeAreaLayoutGuide
+        imageScrollView.translatesAutoresizingMaskIntoConstraints = false
+        imageScrollView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 0).isActive = true
+        imageScrollView.leftAnchor.constraint(equalTo: safeArea.leftAnchor, constant: 0).isActive = true
+        imageScrollView.rightAnchor.constraint(equalTo: safeArea.rightAnchor, constant: 0).isActive = true
+        imageScrollView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: 0).isActive = true
     }
     
 
@@ -55,7 +75,7 @@ extension DetailImageViewController: UIImagePickerControllerDelegate, UIScrollVi
     }
     
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-        return self.imageSelectedImageView
+        return self.detailImageView
     }
     
 }

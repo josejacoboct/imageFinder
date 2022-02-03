@@ -56,7 +56,7 @@ class PhotosViewModel{
     private func image(data: Data?) -> UIImage! {
         guard let data = data, let image = UIImage(data: data) else {
             //default value
-            return UIImage()
+            return UIImage(named: "default")
         }
         
         return image

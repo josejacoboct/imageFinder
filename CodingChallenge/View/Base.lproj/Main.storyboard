@@ -82,43 +82,10 @@
                     <view key="view" contentMode="scaleToFill" id="Fkk-cH-0q5">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="C0M-wk-HTf">
-                                <rect key="frame" x="0.0" y="96" width="375" height="571"/>
-                                <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="eGi-IW-TdN">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="571"/>
-                                    </imageView>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="eGi-IW-TdN" secondAttribute="trailing" id="A1O-5R-g4C"/>
-                                    <constraint firstItem="eGi-IW-TdN" firstAttribute="centerX" secondItem="C0M-wk-HTf" secondAttribute="centerX" id="I1J-P5-qlS"/>
-                                    <constraint firstAttribute="bottom" secondItem="eGi-IW-TdN" secondAttribute="bottom" constant="-20" id="PxK-3f-5Wa"/>
-                                    <constraint firstItem="eGi-IW-TdN" firstAttribute="leading" secondItem="txf-pB-vFo" secondAttribute="leading" id="RSC-ON-0R2"/>
-                                    <constraint firstItem="eGi-IW-TdN" firstAttribute="bottom" secondItem="txf-pB-vFo" secondAttribute="bottom" id="eeH-lD-eRt"/>
-                                    <constraint firstItem="eGi-IW-TdN" firstAttribute="top" secondItem="txf-pB-vFo" secondAttribute="top" id="iLT-KU-iuX"/>
-                                </constraints>
-                                <viewLayoutGuide key="contentLayoutGuide" id="x36-Od-8za"/>
-                                <viewLayoutGuide key="frameLayoutGuide" id="txf-pB-vFo"/>
-                                <connections>
-                                    <outlet property="delegate" destination="lFh-NT-dDM" id="i5l-t3-mMD"/>
-                                </connections>
-                            </scrollView>
-                        </subviews>
                         <viewLayoutGuide key="safeArea" id="wNk-zD-FNd"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="C0M-wk-HTf" firstAttribute="leading" secondItem="wNk-zD-FNd" secondAttribute="leading" id="0Pn-8A-cIX"/>
-                            <constraint firstItem="C0M-wk-HTf" firstAttribute="top" secondItem="Fkk-cH-0q5" secondAttribute="topMargin" id="CVj-LH-LQM"/>
-                            <constraint firstItem="C0M-wk-HTf" firstAttribute="bottom" secondItem="wNk-zD-FNd" secondAttribute="bottom" id="GCo-J8-r8d"/>
-                            <constraint firstItem="C0M-wk-HTf" firstAttribute="centerX" secondItem="Fkk-cH-0q5" secondAttribute="centerX" id="hJQ-z1-c70"/>
-                        </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="YZg-Dw-rp4"/>
-                    <connections>
-                        <outlet property="imageSelectedImageView" destination="eGi-IW-TdN" id="alt-G0-v3N"/>
-                        <outlet property="scrollView" destination="C0M-wk-HTf" id="7n4-eo-fdw"/>
-                    </connections>
+                    <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="YZg-Dw-rp4"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0an-Eq-634" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

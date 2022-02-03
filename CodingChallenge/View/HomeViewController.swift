@@ -24,8 +24,10 @@ class HomeViewController: UIViewController {
         self.title = "Search some text"
         customPhotosCollectionView()
         customSearchBar()
-        
-        
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        cancelSearching()
     }
     
     func loadData(text: String){
@@ -54,6 +56,11 @@ class HomeViewController: UIViewController {
         }
     }
     
+    func cancelSearching(){
+        photosViewModel.cancelLoadData()
+        stopChargerView(viewToCustom: self.view)
+    }
+    
     func showErrorAlert(message: String, viewTarget: UIViewController){
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
@@ -64,21 +71,33 @@ class HomeViewController: UIViewController {
     
     func showChargerView(viewToCustom: UIView) {
                 
-        let safeAreaHeight = self.view.safeAreaLayoutGuide.layoutFrame.height
-        let navBarHeight = self.view.frame.height - headerLabel.frame.height - safeAreaHeight
-        let activityView = UIActivityIndicatorView(style: .large)
-        let chargerView = UIView(frame: CGRect(x: 0, y: navBarHeight, width: viewToCustom.frame.width, height: safeAreaHeight))
+        let chargerView = UIView()
         chargerView.tag = 100
-        activityView.tintColor = .label
-        activityView.frame = chargerView.frame
-        activityView.center = CGPoint(x: chargerView.frame.width / 2, y: chargerView.frame.height / 2)
-        activityView.startAnimating()
         chargerView.backgroundColor = UIColor.black.withAlphaComponent(0.50)
+        
+        let activityView = UIActivityIndicatorView(style: .large)
+        activityView.tintColor = .label
+        activityView.startAnimating()
+        
         chargerView.addSubview(activityView)
         viewToCustom.addSubview(chargerView)
         
-        //chargerView.autoresizingMask = [.flexibleWidth, .flexibleHeight, .flexibleTopMargin, .flexibleBottomMargin]
+        let safeArea = self.view.safeAreaLayoutGuide
         
+        //set constraints to chargerview
+        chargerView.translatesAutoresizingMaskIntoConstraints = false
+        chargerView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 0).isActive = true
+        chargerView.leftAnchor.constraint(equalTo: safeArea.leftAnchor, constant: 0).isActive = true
+        chargerView.rightAnchor.constraint(equalTo: safeArea.rightAnchor, constant: 0).isActive = true
+        chargerView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: 0).isActive = true
+        
+        //set constraints to activityIndicator
+        activityView.translatesAutoresizingMaskIntoConstraints = false
+        activityView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor, constant: 0).isActive = true
+        activityView.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor, constant: 0).isActive = true
+        activityView.leftAnchor.constraint(equalTo: safeArea.leftAnchor, constant: 0).isActive = true
+        activityView.rightAnchor.constraint(equalTo: safeArea.rightAnchor, constant: 0).isActive = true
+        activityView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: 0).isActive = true
     }
     
     func stopChargerView(viewToCustom: UIView){
@@ -86,21 +105,7 @@ class HomeViewController: UIViewController {
             viewWithTag.removeFromSuperview()
         }
     }
-    
-    func showDetailImage(image: UIImage, title: String){
         
-        let showAlert = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
-        let imageView = UIImageView(frame: CGRect(x: 10, y: 10, width: 250, height: 230))
-        imageView.image = image
-        showAlert.view.addSubview(imageView)
-        let height = NSLayoutConstraint(item: showAlert.view!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 300)
-        let width = NSLayoutConstraint(item: showAlert.view!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 250)
-        showAlert.view.addConstraint(height)
-        showAlert.view.addConstraint(width)
-        showAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        self.present(showAlert, animated: true, completion: nil)
-    }
-    
     @IBAction func goToHistory(_ sender: Any) {
         self.performSegue(withIdentifier: "goToHistory", sender: nil)
     }
@@ -119,8 +124,6 @@ class HomeViewController: UIViewController {
                 if let image = item?.image {
                     detailVC.image = image
                 }
-                
-                //_ = segue.destination as! HomeViewController
             }
         }
     }
@@ -155,8 +158,7 @@ extension HomeViewController: UISearchBarDelegate {
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        photosViewModel.cancelLoadData()
-        stopChargerView(viewToCustom: self.view)
+        cancelSearching()
     }
     
 }
