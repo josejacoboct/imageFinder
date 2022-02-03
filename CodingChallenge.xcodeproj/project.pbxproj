@@ -146,9 +146,9 @@
 		44C3307A27A594E80063D503 /* CodingChallenge */ = {
 			isa = PBXGroup;
 			children = (
-				44B9403427A7F82A00CD42C2 /* ViewModel */,
 				447A638027A6B91600230E70 /* View */,
 				44C330B127A5A9370063D503 /* Model */,
+				44B9403427A7F82A00CD42C2 /* ViewModel */,
 				44C330AE27A595DD0063D503 /* Network */,
 				44C3307B27A594E80063D503 /* AppDelegate.swift */,
 				44BC5A4A27AAAAD20046E491 /* Assets.xcassets */,

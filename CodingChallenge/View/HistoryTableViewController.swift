@@ -10,10 +10,10 @@ import UIKit
 class HistoryTableViewController: UITableViewController {
     
     private let historyViewModel = HistoryViewModel()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         loadData()
         setCustomFooterView(tableView: tableView)
     }
@@ -40,7 +40,7 @@ class HistoryTableViewController: UITableViewController {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(title: "Clean", style: .destructive, handler: { [weak self] action in
-                        
+            
             self?.historyViewModel.deleteAllHistory()
             self?.tableView.reloadData()
             //removing unnecesary buttons from view
@@ -48,13 +48,13 @@ class HistoryTableViewController: UITableViewController {
             
         }))
         self.present(alert, animated: true, completion: nil)
-
+        
     }
     
     @objc func buttonAction(_ sender: UIButton!) {
         showDeleteAlert(title: "Are you sure?", message: "This action cannot be undone")
     }
-        
+    
     func loadData(){
         historyViewModel.loadData { error in
             self.tableView.reloadData()
@@ -85,21 +85,21 @@ class HistoryTableViewController: UITableViewController {
         }
     }
     
-
+    
     // MARK: - Table view data source
-
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
         return historyViewModel.numberOfSections()
     }
-
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return historyViewModel.numberOfRows()
     }
-
-
+    
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "historyCell", for: indexPath)
-
+        
         // Configure the cell...
         let searched = historyViewModel.item(indexPath: indexPath)
         cell.textLabel?.text = searched.text
@@ -110,11 +110,11 @@ class HistoryTableViewController: UITableViewController {
         //go to root view
         self.performSegue(withIdentifier: "unwindSegue", sender: indexPath)
     }
-       
+    
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
         false
     }
-
+    
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // Delete the row from the data source

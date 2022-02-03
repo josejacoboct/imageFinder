@@ -35,7 +35,7 @@ class SearchedModel {
     func save(text: String, date: Date) {
         let context = connection()
         let entity = NSEntityDescription.entity(forEntityName: "Searched", in: context)!
-
+        
         let searched = NSManagedObject(entity: entity, insertInto: context)
         searched.setValue(text, forKeyPath: "text")
         searched.setValue(date, forKeyPath: "date")

@@ -12,7 +12,7 @@ class PhotosViewModel{
     
     //Vars
     private let networker = ApiManager()
-    private var photos = [Photo]()
+    var photos = [Photo]()
     
     //get data from flickr
     func loadData(text: String, completionHandler: @escaping (Error?) -> Void

@@ -11,15 +11,15 @@ class PhotoCollectionViewCell: UICollectionViewCell {
     
     //Outlets
     @IBOutlet weak var photoImageView: UIImageView!
-
+    
     //Var
     var id: String = String()
     var image: UIImage? {
-      didSet {
-          DispatchQueue.main.async {
-              self.photoImageView.image = self.image
-          }
-      }
+        didSet {
+            DispatchQueue.main.async {
+                self.photoImageView.image = self.image
+            }
+        }
     }
     
     override func awakeFromNib() {

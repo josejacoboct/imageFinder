@@ -85,7 +85,13 @@
                         <viewLayoutGuide key="safeArea" id="wNk-zD-FNd"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
-                    <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="YZg-Dw-rp4"/>
+                    <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="YZg-Dw-rp4">
+                        <barButtonItem key="rightBarButtonItem" image="download" style="plain" id="p4S-uf-pVP">
+                            <connections>
+                                <action selector="saveInGalleryImage:" destination="lFh-NT-dDM" id="MCZ-mf-Tao"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0an-Eq-634" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -151,6 +157,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="download" width="24" height="24"/>
         <image name="history" width="24" height="24"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

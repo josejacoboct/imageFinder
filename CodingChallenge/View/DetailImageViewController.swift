@@ -12,18 +12,30 @@ class DetailImageViewController: UIViewController {
     //var
     var image = UIImage(named: "default")
     private let detailImageView = UIImageView()
-
+    private var imagePicker: UIImagePickerController!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         detailImageView.image = image
     }
-        
+    
     override func viewDidLayoutSubviews() {
         setDetailSelectedImage()
     }
     
-    func setDetailSelectedImage(){
     
+    @IBAction func saveInGalleryImage(_ sender: Any) {
+        
+        guard let selectedImage = detailImageView.image else {
+            print("Image not found!")
+            return
+        }
+        UIImageWriteToSavedPhotosAlbum(selectedImage, self, #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
+        
+    }
+    
+    func setDetailSelectedImage(){
+        
         //set scroll view
         let imageScrollView: UIScrollView = UIScrollView()
         imageScrollView.delegate = self
@@ -41,7 +53,7 @@ class DetailImageViewController: UIViewController {
         detailImageView.contentMode = .scaleAspectFit
         detailImageView.frame = frameImage
         imageScrollView.addSubview(detailImageView)
-
+        
         //set constraints to imageScrollView
         let safeArea = self.view.safeAreaLayoutGuide
         imageScrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -54,13 +66,31 @@ class DetailImageViewController: UIViewController {
 
 extension DetailImageViewController: UIImagePickerControllerDelegate, UIScrollViewDelegate, UINavigationControllerDelegate {
     
-//    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-//        self.dismiss(animated: true) {
-//
-//        }
-//
-//        //imageSelectedImageView.image =
-//    }
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]){
+        
+        imagePicker.dismiss(animated: true, completion: nil)
+        guard (info[.originalImage] as? UIImage) != nil else {
+            print("Image not found")
+            return
+        }
+        detailImageView.image = image
+    }
+    
+    
+    @objc func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        if let error = error {
+            showAlertWith(title: "Error", message: error.localizedDescription)
+        } else {
+            showAlertWith(title: "Done!", message: "Your image has been saved to your photos.")
+        }
+    }
+    
+    func showAlertWith(title: String, message: String){
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .default))
+        self.present(alertController, animated: true)
+    }
+    
     
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return self.detailImageView

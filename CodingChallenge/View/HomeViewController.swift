@@ -7,6 +7,11 @@
 
 import UIKit
 
+enum ScrollableViewEndless: Int {
+    case firstOption
+    case secondOption
+}
+
 class HomeViewController: UIViewController {
     
     //Outlets
@@ -18,6 +23,10 @@ class HomeViewController: UIViewController {
     private let historyViewModel = HistoryViewModel()
     private var headerCollectionView = UICollectionReusableView()
     private let headerLabel = UILabel()
+    private var numberOfElements = 0
+    
+    // Edit value of this var to check my two options for scroll view endless
+    private let scrollViewOption = ScrollableViewEndless.firstOption
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,8 +43,8 @@ class HomeViewController: UIViewController {
     func loadData(text: String){
         
         //DispatchQueue.main.async { [weak self] in
-            headerLabel.isHidden = true
-            showChargerView(viewToCustom: self.view)
+        headerLabel.isHidden = true
+        showChargerView(viewToCustom: self.view)
         //}
         
         photosViewModel.loadData(text: text) { [weak self] error in
@@ -55,6 +64,7 @@ class HomeViewController: UIViewController {
                 self?.goToTop()
                 self?.photosCollectionView.reloadData()
                 self?.headerLabel.isHidden = false
+                self?.numberOfElements = self?.photosViewModel.numberOfRows() ?? 0
             }
         }
     }
@@ -73,7 +83,7 @@ class HomeViewController: UIViewController {
     }
     
     func showChargerView(viewToCustom: UIView) {
-                
+        
         let chargerView = UIView()
         chargerView.tag = 100
         chargerView.backgroundColor = UIColor.black.withAlphaComponent(0.50)
@@ -109,7 +119,7 @@ class HomeViewController: UIViewController {
             viewWithTag.removeFromSuperview()
         }
     }
-        
+    
     @IBAction func goToHistory(_ sender: Any) {
         self.performSegue(withIdentifier: "goToHistory", sender: nil)
     }
@@ -139,8 +149,6 @@ extension HomeViewController: UISearchBarDelegate {
     func customSearchBar(){
         //Customizing search bar
         searchController.searchBar.delegate = self
-        navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = false
         searchController.searchBar.tintColor = .label
         
         //changing search bar placeholer text and font
@@ -152,6 +160,10 @@ extension HomeViewController: UISearchBarDelegate {
             textfield.attributedPlaceholder = atrString
             
         }
+        
+        //add search controller to nav bar
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -180,17 +192,37 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         headerLabel.frame = CGRect(x: 0 , y: 0, width: self.view.frame.width, height: 30)
         headerLabel.isHidden = true
         headerLabel.textColor = .gray
+        
+        if scrollViewOption == .secondOption {
+            if let layout = photosCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+                layout.sectionHeadersPinToVisibleBounds = true
+            }
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return photosViewModel.numberOfRows()
+        return scrollViewOption == .firstOption ? photosViewModel.numberOfRows() : numberOfElements
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "photosCollectionViewCell", for: indexPath) as! PhotoCollectionViewCell
         
-        let photo = photosViewModel.item(indexPath: indexPath)
-        customPhotosCell(cell: cell, photo: photo)
+        
+        
+        switch scrollViewOption{
+        case .firstOption:
+            let photo = photosViewModel.item(indexPath: indexPath)
+            customPhotosCell(cell: cell, photo: photo)
+        case .secondOption:
+            let photo = photosViewModel.photos[indexPath.row % photosViewModel.photos.count]
+            customPhotosCell(cell: cell , photo: photo)
+            
+            //duplicate number of item to create endless scroll view
+            if indexPath.row >= numberOfElements - ((numberOfElements * 100) / numberOfElements) {
+                numberOfElements += numberOfElements
+                photosCollectionView.reloadData()
+            }
+        }
         
         return cell
     }
@@ -219,7 +251,9 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             
             headerLabel.text = "Results: \(photosViewModel.numberOfRows())"
             headerLabel.font = headerLabel.font.withSize(20)
+            headerLabel.backgroundColor = .systemBackground
             headerCollectionView.insertSubview(headerLabel, at: 0)
+            headerCollectionView.backgroundColor = .systemBackground
             return headerCollectionView
             
             
@@ -240,22 +274,24 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     func goToTop(){
-        let index = IndexPath(item: 0, section: 0)
-        let header = UICollectionView.elementKindSectionHeader
-        if let attributes = photosCollectionView.collectionViewLayout.layoutAttributesForSupplementaryView(ofKind: header, at: index ) {
-            
-            photosCollectionView.setContentOffset(CGPoint(x: 0, y: attributes.frame.origin.y - photosCollectionView.contentInset.top), animated: false)
+        //send to top of collection view only in first type of endless scroll view
+        if scrollViewOption == .firstOption {
+            let index = IndexPath(item: 0, section: 0)
+            let header = UICollectionView.elementKindSectionHeader
+            if let attributes = photosCollectionView.collectionViewLayout.layoutAttributesForSupplementaryView(ofKind: header, at: index ) {
+                
+                photosCollectionView.setContentOffset(CGPoint(x: 0, y: attributes.frame.origin.y - photosCollectionView.contentInset.top), animated: false)
+            }
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         self.performSegue(withIdentifier: "goToImageDetail", sender: indexPath)
     }
-    
-    
 }
 
 extension HomeViewController: UICollectionViewDelegateFlowLayout {
+    
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: collectionView.frame.width, height: 50)
