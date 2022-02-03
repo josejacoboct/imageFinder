@@ -6,42 +6,11 @@
 //
 
 import XCTest
+import CoreData
 @testable import CodingChallenge
 
 class CodingChallengeTests: XCTestCase {
-    
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-    
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-    
-//    func test_get_photos_data(){
-//        let photoViewModel = PhotosViewModel()
-//        let textToFind = "Testing"
-//        photoViewModel.loadData(text: textToFind) { error in
-//            XCTAssertNil(error)
-//        }
-//    }
-    
-    
+        
     func test_get_photo(){
         let photoViewModel = PhotosViewModel()
         let photo = Photo(id: "15466557554", owner: "62865715", secret: "20d54da463", server: "7583", farm: 8, title: "test", isfriend: 0, isfamily: 0)
@@ -62,10 +31,67 @@ class CodingChallengeTests: XCTestCase {
     
     func test_save_text_searched(){
         let historyViewModel = HistoryViewModel()
-        let searched = "some text"
+        let text = "some text"
         let date = Date()
-        historyViewModel.save(text: searched, date: date)
+        historyViewModel.saveInHistory(text: text, date: date)
+        
+        let context = connection()
+        let fetchRequest : NSFetchRequest<Searched> = Searched.fetchRequest()
+        do {
+            let history = try context.fetch(fetchRequest)
+            var exist = false
+            if history.contains(where: { $0.text == text && $0.date == date }) {
+                exist = true
+            }
+            XCTAssertTrue(exist)
+        } catch let error as NSError {
+            print("Error getting data", error)
+        }
     }
     
+    func test_delete_searched_text_in_coredata(){
+        let historyViewModel = HistoryViewModel()
+        historyViewModel.saveInHistory(text: "test text", date: Date())
+        historyViewModel.loadData { error in
+            XCTAssertNil(error)
+            
+            //delete last element
+            let indexPath = IndexPath(row: historyViewModel.numberOfRows() - 1, section: historyViewModel.numberOfSections() - 1)
+            let item = historyViewModel.item(indexPath: indexPath)
+            historyViewModel.deleteFromHistory(index: indexPath.row)
+            
+            let context = self.connection()
+            let fetchRequest : NSFetchRequest<Searched> = Searched.fetchRequest()
+            do {
+                let history = try context.fetch(fetchRequest)
+                var exist = true
+                if !history.contains(where: { $0.text == item.text && $0.date == item.date }) {
+                    exist = false
+                }
+                XCTAssertFalse(exist)
+            } catch let error as NSError {
+                print("Error getting data", error)
+            }
+        }
+        
+    }
 
+    func test_delete_history_in_coredata(){
+        let historyViewModel = HistoryViewModel()
+        historyViewModel.deleteAllHistory()
+                
+        let context = connection()
+        let fetchRequest : NSFetchRequest<Searched> = Searched.fetchRequest()
+        do {
+            let history = try context.fetch(fetchRequest)
+            XCTAssertTrue(history == [])
+        } catch let error as NSError {
+            print("Error getting data", error)
+        }
+    }
+    
+    func connection() -> NSManagedObjectContext {
+        let delegate = UIApplication.shared.delegate as! AppDelegate
+        return delegate.persistentContainer.viewContext
+    }
 }

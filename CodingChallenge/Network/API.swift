@@ -12,7 +12,6 @@ class ApiManager {
     //var
     private var imagesCache = NSCache<NSString, NSData>()
     private let session: URLSession
-    private let baseURL = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=37ad288835e4c64fc0cb8af3f3a1a65d&format=json&nojsoncallback=1&safe_search=1&text="
     private var loadDataTask: URLSessionTask?
     
     init() {
@@ -22,6 +21,7 @@ class ApiManager {
 
     func getPhotosByText(text: String, completionHandler: @escaping ([Photo]?, Error?) -> (Void)) {
                 
+        //creating components to make url
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.flickr.com"
@@ -34,8 +34,8 @@ class ApiManager {
         let text = URLQueryItem(name: "text", value: text)
         components.queryItems = [method,api_key,format,nojsoncallback,safe_search,text]
                 
+        //get url
         guard let url = components.url else {
-            //completionHandler(nil, NetworkManagerError.invalidURL)
             let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey : NetworkManagerError.invalidURL.description!])
             completionHandler(nil, error)
             return
@@ -46,19 +46,16 @@ class ApiManager {
         loadDataTask = session.dataTask(with: request) { data, response, error in
             guard error == nil else {
                 completionHandler(nil, error)
-                //completionHandler(nil, NetworkManagerError.invalidURL)
                 return
             }
             
             guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
                 completionHandler(nil, error)
-                //completionHandler(nil, NetworkManagerError.badResponse)
                 return
             }
             
             guard let data = data else {
                 completionHandler(nil, error)
-                //completionHandler(nil, NetworkManagerError.unsuccessData)
                 return
             }
             
@@ -94,13 +91,11 @@ class ApiManager {
             
             guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
                 completionHandler(nil, error)
-                //completionHandler(nil, NetworkManagerError.unsuccessResponse)
                 return
             }
             
             guard let imageData = data else {
                 completionHandler(nil, error)
-                //completionHandler(nil, NetworkManagerError.unsuccessData)
                 return
             }
             

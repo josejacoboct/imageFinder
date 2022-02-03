@@ -7,13 +7,6 @@
 
 import Foundation
 
-enum URLManagerError: Error {
-    
-    case wrongURL
-    //case unsuccessData
-    //case badLocalUrl
-}
-
 enum NetworkManagerError: LocalizedError {
     
     case invalidURL
@@ -24,7 +17,7 @@ enum NetworkManagerError: LocalizedError {
     var description: String? {
         switch self {
         case .invalidURL:
-            return "It's no posible create a valid URL with the image data."
+            return "It's no posible create a valid URL with the image data or the input text."
         case .badResponse:
             return "The server respond with a bad code."
         case .unsuccessResponse:

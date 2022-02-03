@@ -9,15 +9,11 @@ import UIKit
 
 class HistoryTableViewController: UITableViewController {
     
-    let historyViewModel = HistoryViewModel()
+    private let historyViewModel = HistoryViewModel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         loadData()
         setCustomFooterView(tableView: tableView)
     }
@@ -27,13 +23,16 @@ class HistoryTableViewController: UITableViewController {
     }
     
     func setCustomFooterView(tableView: UITableView){
+        //creating view to use in tableviewfooter
         let footerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 50))
+        
+        //creating and customizing button to clean history
         let cleanHistoryButton = UIButton(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 50))
         cleanHistoryButton.setTitle("Clean history", for: .normal)
         cleanHistoryButton.setTitleColor(.red, for: .normal)
         cleanHistoryButton.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
-        footerView.addSubview(cleanHistoryButton)
         
+        footerView.addSubview(cleanHistoryButton)
         tableView.tableFooterView = footerView
     }
     
@@ -44,8 +43,9 @@ class HistoryTableViewController: UITableViewController {
                         
             self?.historyViewModel.deleteAllHistory()
             self?.tableView.reloadData()
-            self?.tableView.tableFooterView?.isHidden = true
-            self?.navigationItem.rightBarButtonItem = nil
+            //removing unnecesary buttons from view
+            self?.manageHistoryButtons()
+            
         }))
         self.present(alert, animated: true, completion: nil)
 
@@ -62,6 +62,7 @@ class HistoryTableViewController: UITableViewController {
     }
     
     func manageHistoryButtons(){
+        //show buttons only if exist more than 0 elements en history
         self.navigationItem.rightBarButtonItem = historyViewModel.numberOfRows() > 0 ? self.editButtonItem : nil
         tableView.tableFooterView?.isHidden = historyViewModel.numberOfRows() > 0 ? false : true
     }
@@ -72,14 +73,14 @@ class HistoryTableViewController: UITableViewController {
             if let indexPath = sender as? IndexPath {
                 let homeVC = segue.destination as! HomeViewController
                 let item = historyViewModel.item(indexPath: indexPath)
+                
+                //setting data to find in home VC
                 homeVC.searchController.searchBar.text = item.text
                 
                 if let text = item.text {
                     historyViewModel.saveInHistory(text: text, date: Date())
                     homeVC.loadData(text: text)
                 }
-                
-                //_ = segue.destination as! HomeViewController
             }
         }
     }
@@ -88,12 +89,10 @@ class HistoryTableViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return historyViewModel.numberOfSections()
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
         return historyViewModel.numberOfRows()
     }
 
@@ -108,6 +107,7 @@ class HistoryTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        //go to root view
         self.performSegue(withIdentifier: "unwindSegue", sender: indexPath)
     }
        
@@ -124,51 +124,4 @@ class HistoryTableViewController: UITableViewController {
             manageHistoryButtons()
         }
     }
-   
-  
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }*/
-
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

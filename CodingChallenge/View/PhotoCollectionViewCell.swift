@@ -23,6 +23,8 @@ class PhotoCollectionViewCell: UICollectionViewCell {
     }
     
     override func awakeFromNib() {
+        
+        //cutomizing cell
         self.layer.cornerRadius = 10
         self.clipsToBounds = true
         photoImageView.layer.cornerRadius = 10

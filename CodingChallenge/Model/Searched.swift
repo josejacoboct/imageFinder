@@ -26,7 +26,7 @@ class SearchedModel {
             searchedArray = try context.fetch(fetchRequest)
             return searchedArray
         } catch let error as NSError {
-            print("No se pudo recuperar los datos.", error)
+            print("it is not possible to obtain the stored information: ", error)
         }
         
         return searchedArray
@@ -43,7 +43,7 @@ class SearchedModel {
         do {
             try context.save()
         } catch let error as NSError {
-            print("Error saving context\(error), \(error.userInfo)")
+            print("Error saving context: \(error), \(error.userInfo)")
         }
     }
 }

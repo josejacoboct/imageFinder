@@ -14,10 +14,10 @@ class HomeViewController: UIViewController {
     
     //var
     let searchController = UISearchController()
-    let photosViewModel = PhotosViewModel()
-    let historyViewModel = HistoryViewModel()
-    var headerCollectionView = UICollectionReusableView()
-    let headerLabel = UILabel()
+    private let photosViewModel = PhotosViewModel()
+    private let historyViewModel = HistoryViewModel()
+    private var headerCollectionView = UICollectionReusableView()
+    private let headerLabel = UILabel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,18 +27,20 @@ class HomeViewController: UIViewController {
     }
     
     override func viewDidDisappear(_ animated: Bool) {
+        //cancel searching if user leave current view
         cancelSearching()
     }
     
     func loadData(text: String){
         
-        DispatchQueue.main.async { [weak self] in
-            self?.headerLabel.isHidden = true
-            self?.showChargerView(viewToCustom: (self?.view)!)
-        }
+        //DispatchQueue.main.async { [weak self] in
+            headerLabel.isHidden = true
+            showChargerView(viewToCustom: self.view)
+        //}
         
         photosViewModel.loadData(text: text) { [weak self] error in
             
+            //show alert if have one error
             if error != nil && (error as NSError?)?.code != NSURLErrorCancelled {
                 DispatchQueue.main.async {
                     self?.stopChargerView(viewToCustom: (self?.view)!)
@@ -47,6 +49,7 @@ class HomeViewController: UIViewController {
                 }
             }
             
+            //reloading data to show finded images
             DispatchQueue.main.async { [weak self] in
                 self?.stopChargerView(viewToCustom: (self?.view)!)
                 self?.goToTop()
@@ -101,6 +104,7 @@ class HomeViewController: UIViewController {
     }
     
     func stopChargerView(viewToCustom: UIView){
+        //removing charger view with tag 100
         if let viewWithTag = viewToCustom.viewWithTag(100) {
             viewWithTag.removeFromSuperview()
         }
@@ -117,9 +121,10 @@ class HomeViewController: UIViewController {
         
         if segue.identifier == "goToImageDetail" {
             if let indexPath = sender as? IndexPath {
+                
+                //sending image for selected item to detail VC
                 let detailVC = segue.destination as! DetailImageViewController
                 let item = collectionView(photosCollectionView, cellForItemAt: indexPath) as? PhotoCollectionViewCell
-                detailVC.image = item?.image
                 
                 if let image = item?.image {
                     detailVC.image = image
@@ -132,10 +137,13 @@ class HomeViewController: UIViewController {
 extension HomeViewController: UISearchBarDelegate {
     
     func customSearchBar(){
+        //Customizing search bar
         searchController.searchBar.delegate = self
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         searchController.searchBar.tintColor = .label
+        
+        //changing search bar placeholer text and font
         searchController.searchBar.placeholder = "For example Heidelberg"
         if let textfield = searchController.searchBar.value(forKey: "searchField") as? UITextField {
             let atrString = NSAttributedString(string: "For example Heidelberg",
@@ -166,6 +174,7 @@ extension HomeViewController: UISearchBarDelegate {
 extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func customPhotosCollectionView(){
+        //customizing cell
         photosCollectionView.register(UINib(nibName: "PhotoCollectionViewCell", bundle: .main), forCellWithReuseIdentifier: "photosCollectionViewCell")
         photosCollectionView.delegate = self
         headerLabel.frame = CGRect(x: 0 , y: 0, width: self.view.frame.width, height: 30)
@@ -199,6 +208,8 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
+        
+        //setting header information (show number of photos finded in server)
         switch kind {
         case UICollectionView.elementKindSectionHeader:
             headerCollectionView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "headerCollectionView", for: indexPath)
@@ -218,6 +229,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         
+        //infinite collection view (go to top when user reach bottom of photos)
         let scrollHeight = scrollView.frame.size.height
         let contentYoffset = scrollView.contentOffset.y
         let distanceFromBottom = scrollView.contentSize.height - contentYoffset
@@ -244,6 +256,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
 }
 
 extension HomeViewController: UICollectionViewDelegateFlowLayout {
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: collectionView.frame.width, height: 50)
     }
@@ -251,6 +264,7 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
+        //code to set 2 elemets per line in collection view
         let noOfCellsInRow = 2
         let flowLayout = collectionViewLayout as! UICollectionViewFlowLayout
         let totalSpace = flowLayout.sectionInset.left

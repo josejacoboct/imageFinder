@@ -11,7 +11,7 @@ class DetailImageViewController: UIViewController {
     
     //var
     var image = UIImage(named: "default")
-    let detailImageView = UIImageView()
+    private let detailImageView = UIImageView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,29 +50,17 @@ class DetailImageViewController: UIViewController {
         imageScrollView.rightAnchor.constraint(equalTo: safeArea.rightAnchor, constant: 0).isActive = true
         imageScrollView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: 0).isActive = true
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
 
 extension DetailImageViewController: UIImagePickerControllerDelegate, UIScrollViewDelegate, UINavigationControllerDelegate {
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        self.dismiss(animated: true) {
-            
-        }
-        
-        //imageSelectedImageView.image =
-    }
+//    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+//        self.dismiss(animated: true) {
+//
+//        }
+//
+//        //imageSelectedImageView.image =
+//    }
     
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return self.detailImageView
