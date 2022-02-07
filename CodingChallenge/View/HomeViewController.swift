@@ -214,7 +214,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             let photo = photosViewModel.item(indexPath: indexPath)
             customPhotosCell(cell: cell, photo: photo)
         case .secondOption:
-            let photo = photosViewModel.photos[indexPath.row % photosViewModel.photos.count]
+            let photo = photosViewModel.item(row: indexPath.row % photosViewModel.numberOfRows())
             customPhotosCell(cell: cell , photo: photo)
             
             //duplicate number of item to create endless scroll view
